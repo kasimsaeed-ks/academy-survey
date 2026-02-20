@@ -224,12 +224,34 @@ export default function Survey() {
     }, 300);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setAnimatingIn(false);
-    setTimeout(() => {
-      setSubmitted(true);
-      setAnimatingIn(true);
-    }, 300);
+    
+    try {
+      // Send data to Google Sheets
+      const response = await fetch('https://script.google.com/macros/s/AKfycbxhkQyjwMLY4oIYsU3v7Nl8yPXshTUcvHLKfZClF6xkFu1oOZUPIuUWRyNZvzZe_WTp/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(answers),
+      });
+      
+      // Show success message
+      setTimeout(() => {
+        setSubmitted(true);
+        setAnimatingIn(true);
+      }, 300);
+      
+    } catch (error) {
+      console.error('Error submitting survey:', error);
+      // Still show thank you page even if there's an error
+      setTimeout(() => {
+        setSubmitted(true);
+        setAnimatingIn(true);
+      }, 300);
+    }
   };
 
   if (submitted) {
